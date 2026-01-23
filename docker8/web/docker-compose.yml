@@ -1,0 +1,9 @@
+services:
+ web:
+  build: ./web
+  ports:
+    - 8000:80
+  volumes:
+    - datos_web:/usr/share/nginx/html
+volumes:
+ datos_web:

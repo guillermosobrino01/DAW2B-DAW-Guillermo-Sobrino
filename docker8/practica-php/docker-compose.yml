@@ -1,0 +1,16 @@
+services:
+  php:
+    build: ./php
+    ports:
+      - 8000:80
+    volumes:
+      - scripts:/var/www/html
+  bbdd:
+    build: ./bbdd
+    ports:
+      - 4000:3306
+    volumes:
+      - datos_bbdd:/var/lib/data/mysql
+volumes:
+ scripts:
+ data_bbdd:
