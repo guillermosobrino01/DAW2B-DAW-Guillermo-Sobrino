@@ -3,14 +3,24 @@ services:
     build: ./php
     ports:
       - 8000:80
+      # Este puerto tiene que ser compatible con el del dockerfile (el 80)
     volumes:
       - scripts:/var/www/html
   bbdd:
     build: ./bbdd
     ports:
       - 4000:3306
+      # El puerto 3306 puede cambiar
     volumes:
-      - datos_bbdd:/var/lib/data/mysql
+      - datos_bbdd:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 9000:80
+    environment:
+      - PMA_HOST=bbdd
 volumes:
  scripts:
- data_bbdd:
+ datos_bbdd:
