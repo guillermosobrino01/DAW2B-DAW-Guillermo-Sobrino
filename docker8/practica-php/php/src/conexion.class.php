@@ -3,7 +3,7 @@ class Conexion
 {
     private static $instancia = null;
     private $conexion;
-    private $host = 'bbdd';
+    private $host = 'db';
     private $usuario = 'root';
     private $password = 'root';
     private $basedatos = 'dwes_01_gestion_eventos';
