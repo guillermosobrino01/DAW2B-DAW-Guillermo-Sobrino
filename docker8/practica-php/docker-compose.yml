@@ -4,8 +4,6 @@ services:
     ports:
       - 8000:80
       # Este puerto tiene que ser compatible con el del dockerfile (el 80)
-    volumes:
-      - scripts:/var/www/html
     depends_on:
       - db
   db:
@@ -21,11 +19,10 @@ services:
   phpmyadmin:
     image: phpmyadmin
     environment:
-      - PMA_HOST=bd
+      - PMA_HOST=db
     ports:
       - 9000:80
     depends_on:
       - db
 volumes:
- scripts:
  datos_bd:
