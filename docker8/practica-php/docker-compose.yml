@@ -1,28 +1,26 @@
 services:
-  back:
+  php:
     build: ./php
     ports:
       - 8000:80
       # Este puerto tiene que ser compatible con el del dockerfile (el 80)
-    depends_on:
-      - db
-  db:
+    volumes:
+      - scripts:/var/www/html
+  bbdd:
     build: ./bbdd
-    container_name: base_datos
     ports:
       - 4000:3306
       # El puerto 3306 puede cambiar
     volumes:
-      - datos_bd:/var/lib/mysql
+      - datos_bbdd:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
   phpmyadmin:
     image: phpmyadmin
-    environment:
-      - PMA_HOST=db
     ports:
       - 9000:80
-    depends_on:
-      - db
+    environment:
+      - PMA_HOST=bbdd
 volumes:
- datos_bd:
+ scripts:
+ datos_bbdd:
