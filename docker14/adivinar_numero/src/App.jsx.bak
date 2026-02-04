@@ -1,0 +1,12 @@
+import "./App.css";
+import GuessTheNumber from "./components/guessTheNumber";
+
+function App() {
+  return (
+    <>
+      <GuessTheNumber></GuessTheNumber>
+    </>
+  );
+}
+
+export default App;
