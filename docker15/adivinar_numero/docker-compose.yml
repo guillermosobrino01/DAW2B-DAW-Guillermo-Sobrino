@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    ports:
+      - 8000:80
+
+#Para comunicar dos contenedores Docker en el mismo host, lo más efectivo es crear una red personalizada (docker network create) y conectar ambos contenedores a ella, permitiéndoles usar sus nombres como nombre de host. La alternativa directa para comunicación básica es usar el parámetro --link. 
