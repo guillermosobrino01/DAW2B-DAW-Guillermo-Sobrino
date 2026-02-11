@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  db:
+    build: ./db
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pizzeria
+    volumes:
+      - datos_bbdd:/var/lib/mysql
+    networks:
+      - pizzeriaN
+
+  backend:
+    build: ./backend
+    container_name: backend
+    depends_on:
+      - db
+    volumes:
+      - ./backend/php:/var/www/html
+    networks:
+      - pizzeriaN
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - pizzeriaN
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "9000:80"
+    networks:
+      - pizzeriaN
+
+volumes:
+  datos_bbdd:
+
+networks:
+  pizzeriaN:

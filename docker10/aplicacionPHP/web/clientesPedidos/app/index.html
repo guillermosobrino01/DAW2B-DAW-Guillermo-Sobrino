@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <title>Untitled Document</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <style>
+        #loading {
+            display: none;
+        }
+
+    </style>
+    <script src="jquery.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(document).ajaxStart(function() {
+                $("#loading").css("display", "block")
+            })
+            $(document).ajaxComplete(function() {
+                $("#loading").css("display", "none")
+            })
+            $.getJSON("clientesJSON.php", function(data, estado) {
+                if (estado == "success") {
+                    $.each(data, function(indice, valor) {
+                        $("select").append($("<option></option>").text(valor.NombreContacto).attr("value", valor.idCliente))
+                    })
+                }
+            })
+            $("select").change(function() {
+                $.post("pedidosJSON.php", {
+                    q: $(this).val()
+                }, function(data, estado) {
+                    if (estado == "success") {
+                        var tabla = $("<table></table>").attr("border", "1")
+                        var titulos = ["idCliente", "idPedido", "idEmpleado", "FechaPedido", "FechaEntrega"]
+                        var fila0 = $("<tr></tr>")
+                        $.each(titulos, function(indice, valor) {
+                            fila0.append($("<th></th>").text(valor))
+                        })
+                        tabla.append(fila0)
+                        $.each(data, function() {
+                            var fila = $("<tr></tr>")
+                            $.each(this, function(prop, valor) {
+                                fila.append($("<td></td>").text(valor))
+                            })
+                            tabla.append(fila)
+                        })
+                        $("#datos").html(tabla)
+                    }
+                })
+            })
+        })
+
+    </script>
+</head>
+
+<body>
+    <select>
+        <option value="">Escoge cliente</option>
+    </select>
+    <br />
+    <br />
+    <div id="datos">Aqui los pedidos del cliente</div>
+    <div id="loading"><img src="ajax-loader.gif"></div>
+</body>
+
+</html>

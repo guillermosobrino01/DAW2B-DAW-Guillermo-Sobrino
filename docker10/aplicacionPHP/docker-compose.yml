@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+
+  db:
+    build: ./db
+    container_name: clientes_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: neptuno
+      MYSQL_USER: neptuno_user
+      MYSQL_PASSWORD: neptuno_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - neptunoN
+
+  web:
+    build: ./web/clientesPedidos
+    container_name: clientes_web
+    depends_on:
+      - db
+    ports:
+      - "8000:80"
+    volumes:
+      - ./web/clientesPedidos/app:/var/www/html
+    networks:
+      - neptunoN
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: clientes_phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8081:80"
+    networks:
+      - neptunoN
+
+volumes:
+  db_data:
+
+networks:
+  neptunoN:

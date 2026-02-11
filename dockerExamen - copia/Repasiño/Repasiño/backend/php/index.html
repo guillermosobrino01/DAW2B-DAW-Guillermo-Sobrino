@@ -1,0 +1,179 @@
+<html>
+
+<head>
+    <title>Net Prog Pizza</title>
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+            font-size: 12pt
+        }
+
+    </style>
+    <script src="jquery.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#form2").hide()
+            $("#verform2").prop("disabled", true)
+            //////////////////////////////////////////////////
+            /////////// verificacion del cliente ////////////
+            /////////////////////////////////////////////////
+            $("#telefono").focusout(function() {
+                var tlfno = $(this).val()
+                $.ajax({
+                    url: "clientesPizzeria.php",
+                    type: "GET",
+                    data: {
+                        q: tlfno
+                    },
+                    success: function(data) {
+                        var xml = $(data)
+                        var cliente = xml.find("usuario")
+                        if (cliente.length > 0) {
+                            console.log("OK. Existe el cliente")
+                            var direccion = cliente.children("direccion").text()
+                            var ciudad = cliente.children("ciudad").text()
+                            var provincia = cliente.children("provincia").text()
+                            var cp = cliente.children("codPostal").text()
+                            $("#direccion").html(direccion + "\n" + cp + "\n" + ciudad + "\n" + provincia)
+                        } else {
+                            $("#telefono").after($("<label></label>").addClass("fallo").text(" Usuario no registrado").css("color", "red"))
+                            $("#enviar,#pedido,#direccion").prop("disabled", true)
+                            $("#verform2").prop("disabled", false)
+                        }
+                    },
+                    error: function(objetoAJAX) {
+                        console.log(objetoAJAX.status + " " + objetoAJAX.statusText)
+                    }
+                })
+            })
+            //////////////////////////////////////////////////
+            /////////// insercion del pedido ////////////////
+            /////////////////////////////////////////////////
+
+            $("#form1").submit(function(event) {
+                event.preventDefault()
+                var datosEnviar = $(this).serialize()
+                var miarray = $(this).serializeArray()
+                //console.log(miarray)
+                var scriptPHP = $(this).attr("action")
+                var metodo = $(this).attr("method")
+                $.ajax({
+                    url: scriptPHP,
+                    data: datosEnviar,
+                    type: metodo,
+                    success: function(data) {
+                        console.log(data)
+                        $("#form1").slideUp("slow")
+                        $("body").append($("<p></p>").text("OK. El pedido se entregara con estos datos:"))
+                        $.each(miarray, function(indice, valor) {
+                            $("body").append("<b>" + valor.name + "</b>: " + valor.value + "<br/>")
+                        })
+                        var boton = $("<button></button>").text("Otro pedido")
+                        boton.on("click", function() {
+                            location.reload()
+                        })
+
+                        $("body").append("<br/>", boton)
+                    },
+                    error: function(objetoAJAX) {
+                        console.log(objetoAJAX.status + " " + objetoAJAX.statusText)
+                    }
+                })
+            })
+            $("#telefono").keyup(function() {
+                $(".fallo").remove()
+                $("#enviar,#pedido,#direccion").prop("disabled", false)
+            })
+            $("#verform2").click(function() {
+                $("#form1").slideUp("slow")
+                $("#form2").slideDown("slow")
+            })
+            $("#form2").submit(function(event) {
+                event.preventDefault()
+            })
+            $("#form2").submit(function(event) {
+                event.preventDefault()
+                var datosEnviar = $(this).serialize()
+                var scriptPHP = $(this).attr("action")
+                var metodo = $(this).attr("method")
+                var miarray = $(this).serializeArray()
+                $.ajax({
+                    url: scriptPHP,
+                    data: datosEnviar,
+                    type: metodo,
+                    success: function(data) {
+                        console.log("data")
+                        $("#form2").slideUp("slow")
+                        $("body").append($("<p></p>").text("OK. Alta de cliente con estos datos:"))
+                        $.each(miarray, function(indice, valor) {
+                            $("body").append("<b>" + valor.name + "</b>: " + valor.value + "<br/>")
+                        })
+                        var boton = $("<button></button>").text("Hacer pedido")
+                        boton.on("click", function() {
+                            location.reload()
+                        })
+
+                        $("body").append("<br/>", boton)
+                    },
+                    error: function(objetoAJAX) {
+                        $("#form2").slideUp("slow")
+                        $("body").append($("<p></p>").text(objetoAJAX.status + " " + objetoAJAX.statusText))
+                    }
+                })
+            })
+        })
+
+    </script>
+</head>
+
+<body>
+    <div>
+        <p> <img src="logo.gif" alt="Net Prog Pizza" />
+        </p>
+        <form method="POST" action="pedido.php" id="form1">
+            <p>Tel&eacute;fono:
+                <input type="text" size="14" name="telefono" id="telefono" required />
+            </p>
+            <p>Escriba su pedido en este espacio:</p>
+            <p>
+                <textarea name="pedido" id="pedido" rows="6" cols="50" required></textarea>
+                <img id="ajax" src="ajax.jpg" />
+            </p>
+            <p>El pedido sera entregado en:</p>
+            <p>
+                <textarea name="direccion" id="direccion" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <input type="submit" id="enviar" value="Pida su Pizza" />
+            </p>
+            <p>
+                <input type="button" id="verform2" value="Quiero apuntarme" />
+            </p>
+        </form>
+        <form id="form2" method="post" action="insertar_cliente.php">
+            <p>Telefono
+                <input type="text" name="telefono" required>
+            </p>
+            <p>Nombre
+                <input type="text" name="nombre" required>
+            </p>
+            <p>Direccion
+                <input type="text" name="direccion" required>
+            </p>
+            <p>Ciudad
+                <input type="text" name="ciudad" required>
+            </p>
+            <p>Provincia
+                <input type="text" name="provincia" required>
+            </p>
+            <p>C.P.
+                <input type="text" name="codPostal" required>
+            </p>
+            <p>
+                <input type="submit" id="insertar" value="Inscribete" />
+            </p>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+
+services:
+  php:
+    build: ./php                  # Construye la imagen desde el Dockerfile de PHP
+    container_name: bookmedik-php
+    ports:
+      - "8080:80"                 # Exponemos Apache en el host
+    volumes:
+      - ./logs:/var/log/apache2   # Volumen para logs de Apache
+    depends_on:
+      - db                        # Espera a que la DB esté lista
+
+  db:
+    image: mariadb:11             # Imagen oficial de MariaDB
+    container_name: bookmedik-db
+    environment:
+      MYSQL_ROOT_PASSWORD: bookmedik   # Contraseña root
+      MYSQL_DATABASE: bookmedik           # Base de datos que creamos
+      MYSQL_USER: bookmedik                   # Usuario de la app
+      MYSQL_PASSWORD: abookmedikn               # Contraseña del usuario
+    volumes:
+      - db_data:/var/lib/mysql            # Volumen para guardar datos persistentes
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro  # Inicializa la DB
+
+volumes:
+  db_data:    # Volumen Docker para la base de datos
