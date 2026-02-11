@@ -1,0 +1,49 @@
+services:
+  bd:
+    build: ./bd
+    container_name: guille_bd
+    volumes:
+      - vol_bd:/var/lib/mysql
+    networks:
+      - examen
+    environment:
+      MYSQL_ROOT_PASSWORD: naranco
+
+  back:
+    build: ./back
+    container_name: guille_back
+    depends_on:
+      - bd
+    ports:
+      - 8000:80
+    networks:
+      - examen
+
+  front:
+    build: ./front
+    container_name: guille_front
+    depends_on:
+      - back
+    ports:
+      - 80:80
+    networks:
+      - examen
+  
+  pma:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - bd
+    ports:
+      - 9000:80
+    environment:
+      PMA_HOST: bd
+      PMA_USER: root
+      PMA_PASSWORD: naranco
+    networks:
+      - examen
+
+volumes:
+  vol_bd:
+
+networks:
+  examen:

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <div id="datos"></div>
+    <script>
+        async function fetchData() {
+    try {
+    const response = await fetch('http://localhost:8000/api.php'); // Espera la respuesta
+    if (!response.ok) {
+      throw new Error('Error en la red: ' + response.statusText);
+    }
+    const data = await response.json(); // Espera a que se convierta a JSON
+    console.log(data); // Muestra los datos en la consola
+    function crearTabla(data, idContenedor) {
+    if (!data || data.length === 0) return;
+
+    // 1. Crear el elemento tabla
+    let tabla = document.createElement("table");
+    tabla.border="1"
+    
+    // 2. Extraer encabezados (las llaves del primer objeto)
+    let encabezados = Object.keys(data[0]);
+    let filaHeader = tabla.insertRow(-1);
+    
+    encabezados.forEach(titulo => {
+        let th = document.createElement("th");
+        th.innerHTML = titulo.toUpperCase();
+        filaHeader.appendChild(th);
+    });
+
+    // 3. Insertar las filas de datos
+    data.forEach(item => {
+        let fila = tabla.insertRow(-1);
+        encabezados.forEach(columna => {
+            let celda = fila.insertCell(-1);
+            celda.innerHTML = item[columna] ?? ""; // Maneja nulos
+        });
+    });
+
+    // 4. Inyectar en el HTML
+    const contenedor = document.getElementById(idContenedor);
+    contenedor.innerHTML = "";
+    contenedor.appendChild(tabla);
+}
+crearTabla(data,"datos")
+
+  } catch (error) {
+    console.error('Hubo un problema con la operación fetch:', error);
+  }
+}
+
+fetchData(); // Llama a la función para ejecutarla
+
+    </script>
+</body>
+</html>
