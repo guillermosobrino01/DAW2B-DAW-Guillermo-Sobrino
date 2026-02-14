@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   db:
@@ -11,7 +9,7 @@ services:
       MYSQL_USER: neptuno_user
       MYSQL_PASSWORD: neptuno_pass
     volumes:
-      - db_data:/var/lib/mysql
+      - db_datos:/var/lib/mysql
     networks:
       - neptunoN
 
@@ -42,7 +40,7 @@ services:
       - neptunoN
 
 volumes:
-  db_data:
+  db_datos:
 
 networks:
   neptunoN:
