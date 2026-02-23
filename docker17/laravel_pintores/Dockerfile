@@ -1,5 +1,5 @@
 # Usa la imagen oficial de PHP con Apache
-FROM php:8.1-apache
+FROM php:8.4-apache
 
 # Instala las extensiones necesarias de PHP
 RUN docker-php-ext-install pdo pdo_mysql
@@ -21,7 +21,7 @@ RUN docker-php-ext-install zip
 
 # Instalar las dependencias de Laravel
 RUN composer config --global audit.block-insecure false \
-&& composer update --no-dev --prefer-dist --no-interaction --optimize-autoloader
+&& composer install --prefer-dist --no-interaction --optimize-autoloader
 
 # Exponer el puerto 80
 EXPOSE 80
